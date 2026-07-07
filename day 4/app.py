@@ -24,4 +24,3 @@ def multioperator_calculator():   # define a function in which actions perform
 print(multioperator_calculator())    # display output on screen    
  
 
-        
