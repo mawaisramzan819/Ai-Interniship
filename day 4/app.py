@@ -1,28 +1,27 @@
-def advanced_login():
-    try:
-    
-        user_name = input("Enter Your username: ")  # user enter his username 
-        if not user_name:                           # not opertor used for username cannot blank.
-            return ("Username cann't be blank")
-        elif len(user_name) > 6:                     #  this is define lenght of  username.
-            return ("Username have at least 6 characters.")
-        
-        password = input("Enter password: ")           
-        if len(password) < 8 or len(password) > 20 :         # this is define minimum or maximum length of password. 
-         return ("Passeord must have 8 to 20 characters.")
-        
-        confirm_password = input("Confirm passeord: ")
-        if password != confirm_password:                      # confirm the password
-            return ("Password is not same try again!")
-        
-        age = int(input("Enter your age: "))
-        if age >= 18:                                         #  age limit
-            return ("Login successfull.")
-        else:
-            return ("Please fill the form according to term and conditions.")
+def multioperator_calculator():   # define a function in which actions perform
 
+    try:               # set error handling 
+
+        num1 = float(input("Enter number 1: "))          # user enters number1 to perform action
+        num2 = float(input("Enter number 2: "))          # user enters number2 to perform action
+        operator = input("Enter operation to perform (+,-,*,/):  ").strip()     #  user select action to perform
+        # using conditional statment for perform operations
+        if operator == "+":
+            return num1 + num2
+        elif operator == "-":
+            return num1 - num2 
+        elif operator == "*":
+            return num1 * num2 
+        elif operator == "/":
+            if num2 == 0:
+                return ("Division by zero is not allowed!")
+ 
+        # if user enters invalid input except of raising error it can handle by valueError
     except ValueError:
-        return("Enter valid input!")       # In the form of invalid input riase valueError message!
+
+        return ("Invalid input! Please enter numeric values.")
+
+print(multioperator_calculator())    # display output on screen    
  
 
-print(advanced_login())
+        
