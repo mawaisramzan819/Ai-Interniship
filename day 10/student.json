@@ -1,0 +1,20 @@
+{
+    "student_id1": {
+        "name": "Awais",
+        "age": 19,
+        "grades": {
+            "Physics": "B",
+            "Maths": "A",
+            "English": "A+"
+        }
+    },
+    "student_id2": {
+        "name": "Ahmad",
+        "age": 18,
+        "grades": {
+            "Physics": "B",
+            "Maths": "B",
+            "English": "A+"
+        }
+    }
+}
