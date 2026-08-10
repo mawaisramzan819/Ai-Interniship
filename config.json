@@ -1,0 +1,14 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "mydata"
+  },
+  "api key": {
+    "openai": "Your api key here"
+  },
+  "features": {
+    "dark mode": true,
+    "notifications": true
+  }
+}
