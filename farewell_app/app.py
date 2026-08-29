@@ -197,6 +197,66 @@ def render_startup_state_machine():
     """, height=0, width=0)
 
 
+def sync_audio_player():
+    """Sync background audio playback with current music_playing state."""
+    is_playing = st.session_state.get("music_playing", True)
+    if is_playing:
+        components.html("""
+        <script>
+        (function() {
+            try {
+                const pDoc = window.parent.document;
+                let audio = pDoc.getElementById('farewellBgAudioMain');
+                if (audio) {
+                    if (audio.paused) {
+                        audio.volume = 0;
+                        let playPromise = audio.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                let start = performance.now();
+                                function fadeIn() {
+                                    let el = performance.now() - start;
+                                    let frac = Math.min(el / 400, 1);
+                                    audio.volume = frac * 0.18;
+                                    if (frac < 1) requestAnimationFrame(fadeIn);
+                                }
+                                requestAnimationFrame(fadeIn);
+                            }).catch(err => console.log("Play error:", err));
+                        }
+                    }
+                }
+            } catch(e) {}
+        })();
+        </script>
+        """, height=0, width=0)
+    else:
+        components.html("""
+        <script>
+        (function() {
+            try {
+                const pDoc = window.parent.document;
+                let audio = pDoc.getElementById('farewellBgAudioMain');
+                if (audio && !audio.paused) {
+                    let start = performance.now();
+                    let initVol = audio.volume;
+                    function fadeOut() {
+                        let el = performance.now() - start;
+                        let frac = Math.min(el / 300, 1);
+                        audio.volume = Math.max(0, initVol * (1 - frac));
+                        if (frac < 1) {
+                            requestAnimationFrame(fadeOut);
+                        } else {
+                            audio.pause();
+                        }
+                    }
+                    requestAnimationFrame(fadeOut);
+                }
+            } catch(e) {}
+        })();
+        </script>
+        """, height=0, width=0)
+
+
 # -----------------------------------------------------------------------------
 # 4. Cinematic Vector Artworks (SVG)
 # -----------------------------------------------------------------------------
@@ -360,57 +420,14 @@ def render_sidebar(active_section: str, is_loading: bool = False):
         <div class="sidebar-music-widget">
             <div style="display:flex; align-items:center; gap:8px;">
                 <span style="color:#f59e0b;">♪</span>
-                <span style="font-size:0.75rem; color:#94a3b8; font-weight:600; font-family:var(--font-ui);">Dhun</span>
+                <span style="font-size:0.75rem; color:#94a3b8; font-weight:600; font-family:var(--font-ui);">Music</span>
                 {sound_bars}
             </div>
     """)
 
-    toggle_btn_label = "⏸ stop music" if is_music_on else "▶ start music"
+    toggle_btn_label = "⏸ stop music" if is_music_on else "▶ Start music"
     if st.button(toggle_btn_label, key="sidebar_music_toggle_btn", use_container_width=False, disabled=is_loading):
-        if is_music_on:
-            components.html("""
-            <script>
-            (function() {
-                const pDoc = window.parent.document;
-                const audio = pDoc.getElementById('farewellBgAudioMain');
-                if (audio) {
-                    let start = performance.now();
-                    let initVol = audio.volume;
-                    function fadeOut() {
-                        let el = performance.now() - start;
-                        let frac = Math.min(el / 350, 1);
-                        audio.volume = Math.max(0, initVol * (1 - frac));
-                        if (frac < 1) requestAnimationFrame(fadeOut);
-                        else audio.pause();
-                    }
-                    requestAnimationFrame(fadeOut);
-                }
-            })();
-            </script>
-            """, height=0, width=0)
-            st.session_state["music_playing"] = False
-        else:
-            components.html("""
-            <script>
-            (function() {
-                const pDoc = window.parent.document;
-                const audio = pDoc.getElementById('farewellBgAudioMain');
-                if (audio) {
-                    audio.volume = 0;
-                    audio.play();
-                    let start = performance.now();
-                    function fadeIn() {
-                        let el = performance.now() - start;
-                        let frac = Math.min(el / 400, 1);
-                        audio.volume = frac * 0.18;
-                        if (frac < 1) requestAnimationFrame(fadeIn);
-                    }
-                    requestAnimationFrame(fadeIn);
-                }
-            })();
-            </script>
-            """, height=0, width=0)
-            st.session_state["music_playing"] = True
+        st.session_state["music_playing"] = not is_music_on
         st.rerun()
 
     ui("""
@@ -428,10 +445,10 @@ def render_home_chapter():
     sec = content.OPENING_SECTION
     hero_svg = get_hero_sunset_svg()
     is_music_on = st.session_state.get("music_playing", True)
-    music_btn_label = "⏸ stop music" if is_music_on else "▶ start music"
+    music_btn_label = "⏸ stop music" if is_music_on else "▶ Start music"
     bottom_quote = sec.get(
         "bottom_quote",
-        "“Agar main is kahani ka anjaam badal sakta, to main ek baar phir sirf ap koein hi chunta.”"
+        "“Agar main is kahani ka anjaam badal sakta, to main ek baar phir sirf tumhein hi chunta.”"
     )
 
     ui(f"""
@@ -461,50 +478,7 @@ def render_home_chapter():
             st.rerun()
     with col2:
         if st.button(f"{music_btn_label}", key="home_secondary_cta"):
-            if is_music_on:
-                components.html("""
-                <script>
-                (function() {
-                    const pDoc = window.parent.document;
-                    const audio = pDoc.getElementById('farewellBgAudioMain');
-                    if (audio) {
-                        let start = performance.now();
-                        let initVol = audio.volume;
-                        function fadeOut() {
-                            let el = performance.now() - start;
-                            let frac = Math.min(el / 350, 1);
-                            audio.volume = Math.max(0, initVol * (1 - frac));
-                            if (frac < 1) requestAnimationFrame(fadeOut);
-                            else audio.pause();
-                        }
-                        requestAnimationFrame(fadeOut);
-                    }
-                })();
-                </script>
-                """, height=0, width=0)
-                st.session_state["music_playing"] = False
-            else:
-                components.html("""
-                <script>
-                (function() {
-                    const pDoc = window.parent.document;
-                    const audio = pDoc.getElementById('farewellBgAudioMain');
-                    if (audio) {
-                        audio.volume = 0;
-                        audio.play();
-                        let start = performance.now();
-                        function fadeIn() {
-                            let el = performance.now() - start;
-                            let frac = Math.min(el / 400, 1);
-                            audio.volume = frac * 0.18;
-                            if (frac < 1) requestAnimationFrame(fadeIn);
-                        }
-                        requestAnimationFrame(fadeIn);
-                    }
-                })();
-                </script>
-                """, height=0, width=0)
-                st.session_state["music_playing"] = True
+            st.session_state["music_playing"] = not is_music_on
             st.rerun()
 
     ui(f"""
@@ -969,6 +943,9 @@ def main():
         st.session_state["selected_memory"] = None
 
     load_styles()
+
+    # Sync Persistent Audio State with Browser
+    sync_audio_player()
 
     # Render 3-State Startup Machine via components.html on Initial Load / Refresh
     if is_initial_load:
