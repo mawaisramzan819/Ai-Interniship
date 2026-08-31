@@ -1,0 +1,40 @@
+{
+    "1": {
+        "name": "Awais Ramzan",
+        "phone": "+923011939995",
+        "email": "awais@gmail.com",
+        "tags": [
+            "ML",
+            "Python",
+            "AI"
+        ],
+        "notes": [
+            "AI Engineer",
+            "Met at hackathon"
+        ]
+    },
+    "2": {
+        "name": "Ahmad Ali",
+        "phone": "+923059839320",
+        "email": "ahmad@gmail.com",
+        "tags": [
+            "Web",
+            "Python"
+        ],
+        "notes": [
+            "Frontend Developer"
+        ]
+    },
+    "3": {
+        "name": "Ali Hassan",
+        "phone": "+923001234567",
+        "email": "ali@gmail.com",
+        "tags": [
+            "Django",
+            "Python"
+        ],
+        "notes": [
+            "Backend Developer"
+        ]
+    }
+}
